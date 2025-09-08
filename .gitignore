@@ -191,6 +191,22 @@ cython_debug/
 # Ruff stuff:
 .ruff_cache/
 
+# Frontend artifacts and dependencies
+frontend/node_modules/
+frontend/build/
+frontend/coverage/
+
+# Databases and local state
+*.db
+backend/*.db
+backend/**/*.db
+
+# Editor/OS cruft
+.DS_Store
+
+# ESLint cache
+frontend/.eslintcache
+
 # PyPI configuration file
 .pypirc
 

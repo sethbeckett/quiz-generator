@@ -1,0 +1,10 @@
+.topnav { position: sticky; top: 0; z-index: 50; background: var(--color-surface); border-bottom: 1px solid var(--color-border); }
+.topnav__inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 1rem; }
+.topnav__brand { display: flex; align-items: center; gap: 0.5rem; background: transparent; border: none; cursor: pointer; padding: 0.35rem 0.5rem; border-radius: var(--radius-sm); }
+.topnav__logo { display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center; border-radius: 6px; background: var(--color-accent); color: #fff; font-weight: 800; font-size: 0.85rem; }
+.topnav__title { font-weight: 700; color: var(--color-text); font-size: 0.95rem; }
+.topnav__nav { display: flex; gap: 0.5rem; }
+.topnav__link { background: #eef2ff; color: var(--color-accent); border: 1px solid #e5e7eb; padding: 0.4rem 0.75rem; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
+.topnav__link:hover { background: #e0e7ff; }
+
+

@@ -1,0 +1,99 @@
+[tool.ruff]
+# Python version
+target-version = "py311"
+
+# Line length
+line-length = 88
+
+# Enable auto-fixing
+fix = true
+
+# Directories to exclude
+exclude = [
+    ".git",
+    "__pycache__",
+    "venv",
+    ".venv",
+    "migrations",
+    ".mypy_cache",
+    ".pytest_cache",
+]
+
+[tool.ruff.lint]
+# Enable these rule categories
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "PIE",  # flake8-pie
+    "SIM",  # flake8-simplify
+]
+
+# Disable specific rules
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "E203",   # whitespace before ':' (handled by formatter)
+    "B008",   # do not perform function calls in argument defaults
+]
+
+# Per-file ignores
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py
+"tests/*" = ["F401", "F811", "E712"]  # Allow unused imports, redefinitions, and == True/False in tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.ruff.format]
+# Use double quotes
+quote-style = "double"
+
+# Use spaces for indentation
+indent-style = "space"
+
+# Respect line length
+line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "sqlalchemy.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "google.*",
+    "pytest.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "-v --strict-markers --disable-warnings"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+  "integration: marks tests as integration tests (may require real API keys)",
+  "slow: marks tests as slow running",
+]

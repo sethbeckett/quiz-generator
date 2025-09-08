@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./quiz_generator.db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DEBUG=True
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - FRONTEND_URL=http://localhost:3000
+    volumes:
+      - ./backend:/app
+      - quiz_data:/app/data
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost:8000/api/v1
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm start
+    depends_on:
+      - backend
+
+volumes:
+  quiz_data:

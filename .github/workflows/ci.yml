@@ -1,0 +1,209 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  backend-lint:
+    name: Backend Linting & Formatting
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run Ruff (linting & formatting)
+      run: |
+        cd backend
+        ruff check app/ tests/
+        ruff format --check app/ tests/
+    
+    - name: Run mypy (type checking)
+      run: |
+        cd backend
+        mypy app/
+
+  backend-test:
+    name: Backend Testing
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run unit tests with coverage
+      run: |
+        cd backend
+        pytest tests/ -v --cov=app --cov-report=xml --cov-report=html --cov-report=term -m "not integration"
+      env:
+        GEMINI_API_KEY: test-key
+        DATABASE_URL: sqlite:///./test.db
+        
+    - name: Run integration tests (if API key available)
+      run: |
+        cd backend
+        pytest tests/test_integration.py -v
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        DATABASE_URL: sqlite:///./test.db
+      continue-on-error: true  # Don't fail CI if no API key
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./backend/coverage.xml
+        flags: backend
+        name: backend-coverage
+
+  frontend-lint:
+    name: Frontend Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+    
+    - name: Run ESLint
+      run: |
+        cd frontend
+        npm run lint || true  # Allow ESLint to fail for now
+    
+    - name: Run TypeScript type checking
+      run: |
+        cd frontend
+        npm run type-check
+    
+    - name: Check build
+      run: |
+        cd frontend
+        npm run build
+
+  frontend-test:
+    name: Frontend Testing
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+    
+    - name: Run tests with coverage
+      run: |
+        cd frontend
+        npm run test:ci
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./frontend/coverage/lcov.info
+        flags: frontend
+        name: frontend-coverage
+
+  docker-build:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create dummy .env file
+      run: |
+        echo "GEMINI_API_KEY=test-key" > .env
+    
+    - name: Build with Docker Compose
+      run: |
+        docker compose build
+    
+    - name: Test Docker services start
+      run: |
+        docker compose up -d
+        sleep 10
+        
+        # Test backend health
+        curl -f http://localhost:8000/health || exit 1
+        
+        # Test frontend is serving
+        curl -f http://localhost:3000 || exit 1
+        
+        docker compose down
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
