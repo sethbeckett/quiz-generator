@@ -2,6 +2,8 @@
 API routes for quiz operations.
 """
 
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -23,7 +25,9 @@ router = APIRouter(prefix="/quiz", tags=["quiz"])
 
 
 @router.post("/generate", response_model=QuizResponse)
-async def generate_quiz(quiz_data: QuizCreate, db: Session = Depends(get_db)):
+async def generate_quiz(
+    quiz_data: QuizCreate, db: Session = Depends(get_db)
+) -> QuizResponse:
     """
     Generate a new quiz based on the provided topic.
 
@@ -50,7 +54,7 @@ async def generate_quiz(quiz_data: QuizCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/{quiz_id}", response_model=QuizResponse)
-def get_quiz(quiz_id: int, db: Session = Depends(get_db)):
+def get_quiz(quiz_id: int, db: Session = Depends(get_db)) -> QuizResponse:
     """
     Retrieve a specific quiz by ID.
 
@@ -74,7 +78,9 @@ def get_quiz(quiz_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=list[QuizResponse])
-def list_quizzes(limit: int = 20, offset: int = 0, db: Session = Depends(get_db)):
+def list_quizzes(
+    limit: int = 20, offset: int = 0, db: Session = Depends(get_db)
+) -> list:
     """
     List all quizzes with pagination.
 
@@ -93,7 +99,7 @@ def list_quizzes(limit: int = 20, offset: int = 0, db: Session = Depends(get_db)
 @router.post("/{quiz_id}/submit", response_model=QuizResult)
 def submit_quiz(
     quiz_id: int, submission: QuizSubmission, db: Session = Depends(get_db)
-):
+) -> QuizResult:
     """
     Submit answers for a quiz and get results.
 
@@ -125,7 +131,7 @@ def submit_quiz(
 
 
 @router.get("/{quiz_id}/attempts", response_model=list[QuizAttemptResponse])
-def get_quiz_attempts(quiz_id: int, db: Session = Depends(get_db)):
+def get_quiz_attempts(quiz_id: int, db: Session = Depends(get_db)) -> list:
     """
     Get all attempts for a specific quiz.
 
@@ -152,7 +158,7 @@ def get_quiz_attempts(quiz_id: int, db: Session = Depends(get_db)):
 @router.post("/{quiz_id}/feedback", response_model=FeedbackResponse)
 async def get_quiz_feedback(
     quiz_id: int, payload: FeedbackRequest, db: Session = Depends(get_db)
-):
+) -> Any:
     """
     Generate brief explanations for incorrect answers.
 

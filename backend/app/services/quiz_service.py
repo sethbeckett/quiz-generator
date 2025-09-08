@@ -3,6 +3,7 @@ Service layer for quiz-related business logic.
 """
 
 import logging
+from typing import Any
 
 from sqlalchemy.orm import Session
 
@@ -13,15 +14,17 @@ from . import gemini_service as gemini_module
 logger = logging.getLogger(__name__)
 
 # Allow tests to override the gemini service via this module attribute
-gemini_service = None  # type: ignore
+gemini_service = None
 
 
-def get_gemini_service():
+def get_gemini_service() -> Any:
     """Return the active gemini service instance, supporting test overrides."""
     global gemini_service
-    if gemini_service is not None:
-        return gemini_service
-    return getattr(gemini_module, "gemini_service", None)
+    return (
+        gemini_service
+        if gemini_service is not None
+        else getattr(gemini_module, "gemini_service", None)
+    )
 
 
 class QuizService:
@@ -214,7 +217,7 @@ class QuizService:
                 )
 
             # Update attempt with final score
-            attempt.score = correct_count
+            attempt.score = correct_count  # type: ignore[assignment]
 
             # Commit all changes
             self.db.commit()

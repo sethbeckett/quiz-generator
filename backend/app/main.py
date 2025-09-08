@@ -3,6 +3,7 @@ Main FastAPI application entry point.
 """
 
 import logging
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """
     Application lifespan management.
     """
@@ -75,7 +76,7 @@ app.include_router(quiz.router, prefix="/api/v1")
 
 
 @app.get("/")
-async def root():
+async def root() -> dict[str, str]:
     """Root endpoint with API information."""
     return {
         "message": "Quiz Generator API",
@@ -86,13 +87,13 @@ async def root():
 
 
 @app.get("/health")
-async def health_check():
+async def health_check() -> dict[str, str]:
     """Health check endpoint."""
     return {"status": "healthy", "service": "quiz-generator-api", "version": "1.0.0"}
 
 
 @app.get("/api/v1/health")
-async def api_health_check():
+async def api_health_check() -> dict[str, str]:
     """API-specific health check with Gemini connection test."""
     try:
         from .services.gemini_service import gemini_service

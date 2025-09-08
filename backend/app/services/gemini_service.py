@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class GeminiService:
     """Service for generating quizzes using Google Gemini API."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the Gemini service with API client."""
         if not settings.gemini_api_key:
             raise ValueError("GEMINI_API_KEY environment variable is required")

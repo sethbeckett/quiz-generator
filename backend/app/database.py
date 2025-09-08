@@ -39,6 +39,6 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
-def create_tables():
+def create_tables() -> None:
     """Create all database tables."""
     Base.metadata.create_all(bind=engine)
