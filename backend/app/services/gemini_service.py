@@ -103,7 +103,9 @@ Make sure the JSON is valid and properly formatted."""
                 response_text = response.text.strip()
 
                 # Check if response is wrapped in markdown code blocks
-                if response_text.startswith("```json") and response_text.endswith("```"):
+                if response_text.startswith("```json") and response_text.endswith(
+                    "```"
+                ):
                     # Extract JSON from markdown code block
                     json_start = response_text.find("```json") + 7
                     json_end = response_text.rfind("```")
@@ -135,7 +137,9 @@ Make sure the JSON is valid and properly formatted."""
             logger.error(f"Error generating quiz with Gemini API: {e}")
             return None
 
-    async def explain_incorrect_answers(self, payload: FeedbackRequest) -> FeedbackResponse | None:
+    async def explain_incorrect_answers(
+        self, payload: FeedbackRequest
+    ) -> FeedbackResponse | None:
         """
         Ask the model for brief explanations for incorrect answers.
 
@@ -151,7 +155,7 @@ Make sure the JSON is valid and properly formatted."""
 
             prompt = (
                 "You are an instructor. For each question below, explain in 2–3 short sentences why the user-selected answer is incorrect and why the correct answer is right. "
-                "Use plain language, no hedging, and avoid repeating the full question text. Output strict JSON array with items of the form {\"question_id\": number, \"explanation\": string}.\n\n"
+                'Use plain language, no hedging, and avoid repeating the full question text. Output strict JSON array with items of the form {"question_id": number, "explanation": string}.\n\n'
                 f"Topic: {payload.topic}\nQuestions:\n" + "\n".join(bullet_lines)
             )
 
@@ -162,12 +166,15 @@ Make sure the JSON is valid and properly formatted."""
 
             text = response.text.strip()
             if text.startswith("```json") and text.endswith("```"):
-                text = text[text.find("```json") + 7:text.rfind("```")].strip()
+                text = text[text.find("```json") + 7 : text.rfind("```")].strip()
             elif text.startswith("```") and text.endswith("```"):
-                text = text[text.find("```") + 3:text.rfind("```")].strip()
+                text = text[text.find("```") + 3 : text.rfind("```")].strip()
 
             parsed = json.loads(text)
-            items = [FeedbackItem(question_id=i["question_id"], explanation=i["explanation"]) for i in parsed]
+            items = [
+                FeedbackItem(question_id=i["question_id"], explanation=i["explanation"])
+                for i in parsed
+            ]
             return FeedbackResponse(items=items)
         except Exception as e:
             logger.error(f"Failed to get feedback explanations: {e}")

@@ -163,7 +163,9 @@ class FeedbackRequest(BaseModel):
     """Request payload to get feedback for incorrect answers."""
 
     topic: str = Field(..., description="The quiz topic")
-    items: list[FeedbackQuestion] = Field(..., description="Incorrect answers to explain")
+    items: list[FeedbackQuestion] = Field(
+        ..., description="Incorrect answers to explain"
+    )
 
 
 class FeedbackItem(BaseModel):

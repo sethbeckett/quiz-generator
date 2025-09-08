@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 # Allow tests to override the gemini service via this module attribute
 gemini_service = None  # type: ignore
 
+
 def get_gemini_service():
     """Return the active gemini service instance, supporting test overrides."""
     global gemini_service
@@ -150,7 +151,7 @@ class QuizService:
             attempt = QuizAttempt(
                 quiz_id=quiz.id,
                 total_questions=len(quiz.questions),
-                score=0  # Initialize with 0, will be updated with actual score
+                score=0,  # Initialize with 0, will be updated with actual score
             )
             self.db.add(attempt)
             self.db.flush()  # Get the attempt ID

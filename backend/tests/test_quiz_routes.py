@@ -196,28 +196,34 @@ class TestQuizRoutes:
         db = TestingSessionLocal()
         quiz = Quiz(topic="Topic")
         q = Question(question_text="Q?", question_order=1, quiz=quiz)
-        _opta = QuestionOption(option_text="A1", option_letter="A", is_correct=True, question=q)
-        _optb = QuestionOption(option_text="B1", option_letter="B", is_correct=False, question=q)
+        _opta = QuestionOption(
+            option_text="A1", option_letter="A", is_correct=True, question=q
+        )
+        _optb = QuestionOption(
+            option_text="B1", option_letter="B", is_correct=False, question=q
+        )
         db.add(quiz)
         db.commit()
         db.refresh(quiz)
         db.close()
 
         # Mock gemini feedback
-        mock_gemini_service.explain_incorrect_answers = AsyncMock(return_value={
-            "items": [{"question_id": 1, "explanation": "Because ..."}]
-        })
+        mock_gemini_service.explain_incorrect_answers = AsyncMock(
+            return_value={"items": [{"question_id": 1, "explanation": "Because ..."}]}
+        )
 
         payload = {
             "topic": "Topic",
-            "items": [{
-                "question_id": 1,
-                "question_text": "Q?",
-                "user_selected": "B",
-                "user_selected_text": "B1",
-                "correct_option": "A",
-                "correct_text": "A1"
-            }]
+            "items": [
+                {
+                    "question_id": 1,
+                    "question_text": "Q?",
+                    "user_selected": "B",
+                    "user_selected_text": "B1",
+                    "correct_option": "A",
+                    "correct_text": "A1",
+                }
+            ],
         }
 
         response = self.client.post(f"/api/v1/quiz/{quiz.id}/feedback", json=payload)
@@ -252,22 +258,21 @@ class TestQuizRoutesEndToEnd:
                             question="What is 2+2?",
                             options={"A": "3", "B": "4", "C": "5", "D": "6"},
                             correct_answer="B",
-                            explanation="Basic addition: 2+2=4"
+                            explanation="Basic addition: 2+2=4",
                         ),
                         GeneratedQuizQuestion(
                             question="What is 3*3?",
                             options={"A": "6", "B": "8", "C": "9", "D": "12"},
                             correct_answer="C",
-                            explanation="Basic multiplication: 3*3=9"
-                        )
-                    ]
+                            explanation="Basic multiplication: 3*3=9",
+                        ),
+                    ],
                 )
             )
 
             # Generate quiz
             response = self.client.post(
-                "/api/v1/quiz/generate",
-                json={"topic": "Mathematics"}
+                "/api/v1/quiz/generate", json={"topic": "Mathematics"}
             )
 
             assert response.status_code == 200
@@ -289,16 +294,17 @@ class TestQuizRoutesEndToEnd:
         # Find correct answers
         correct_answers = []
         for question in questions:
-            correct_option = next(opt for opt in question["options"] if opt["is_correct"])
-            correct_answers.append({
-                "question_id": question["id"],
-                "selected_option_id": correct_option["id"]
-            })
+            correct_option = next(
+                opt for opt in question["options"] if opt["is_correct"]
+            )
+            correct_answers.append(
+                {
+                    "question_id": question["id"],
+                    "selected_option_id": correct_option["id"],
+                }
+            )
 
-        submission = {
-            "quiz_id": quiz_id,
-            "answers": correct_answers
-        }
+        submission = {"quiz_id": quiz_id, "answers": correct_answers}
 
         response = self.client.post(f"/api/v1/quiz/{quiz_id}/submit", json=submission)
         assert response.status_code == 200
@@ -331,14 +337,13 @@ class TestQuizRoutesEndToEnd:
                             question="What is 3*3?",
                             options={"A": "6", "B": "8", "C": "9", "D": "12"},
                             correct_answer="C",
-                        )
-                    ]
+                        ),
+                    ],
                 )
             )
 
             response = self.client.post(
-                "/api/v1/quiz/generate",
-                json={"topic": "Mathematics"}
+                "/api/v1/quiz/generate", json={"topic": "Mathematics"}
             )
 
             quiz_data = response.json()
@@ -354,23 +359,28 @@ class TestQuizRoutesEndToEnd:
         for i, question in enumerate(questions):
             if i == 0:
                 # First question: select correct answer
-                correct_option = next(opt for opt in question["options"] if opt["is_correct"])
-                answers.append({
-                    "question_id": question["id"],
-                    "selected_option_id": correct_option["id"]
-                })
+                correct_option = next(
+                    opt for opt in question["options"] if opt["is_correct"]
+                )
+                answers.append(
+                    {
+                        "question_id": question["id"],
+                        "selected_option_id": correct_option["id"],
+                    }
+                )
             else:
                 # Second question: select incorrect answer
-                incorrect_option = next(opt for opt in question["options"] if not opt["is_correct"])
-                answers.append({
-                    "question_id": question["id"],
-                    "selected_option_id": incorrect_option["id"]
-                })
+                incorrect_option = next(
+                    opt for opt in question["options"] if not opt["is_correct"]
+                )
+                answers.append(
+                    {
+                        "question_id": question["id"],
+                        "selected_option_id": incorrect_option["id"],
+                    }
+                )
 
-        submission = {
-            "quiz_id": quiz_id,
-            "answers": answers
-        }
+        submission = {"quiz_id": quiz_id, "answers": answers}
 
         response = self.client.post(f"/api/v1/quiz/{quiz_id}/submit", json=submission)
         assert response.status_code == 200
@@ -397,17 +407,19 @@ class TestQuizRoutesEndToEnd:
                     questions=[
                         GeneratedQuizQuestion(
                             question="Test question?",
-                            options={"A": "Answer A", "B": "Answer B", "C": "Answer C", "D": "Answer D"},
+                            options={
+                                "A": "Answer A",
+                                "B": "Answer B",
+                                "C": "Answer C",
+                                "D": "Answer D",
+                            },
                             correct_answer="A",
                         )
-                    ]
+                    ],
                 )
             )
 
-            response = self.client.post(
-                "/api/v1/quiz/generate",
-                json={"topic": "Test"}
-            )
+            response = self.client.post("/api/v1/quiz/generate", json={"topic": "Test"})
 
             quiz_id = response.json()["id"]
 
@@ -420,10 +432,12 @@ class TestQuizRoutesEndToEnd:
         correct_option = next(opt for opt in question["options"] if opt["is_correct"])
         submission1 = {
             "quiz_id": quiz_id,
-            "answers": [{
-                "question_id": question["id"],
-                "selected_option_id": correct_option["id"]
-            }]
+            "answers": [
+                {
+                    "question_id": question["id"],
+                    "selected_option_id": correct_option["id"],
+                }
+            ],
         }
 
         response1 = self.client.post(f"/api/v1/quiz/{quiz_id}/submit", json=submission1)
@@ -432,13 +446,17 @@ class TestQuizRoutesEndToEnd:
         assert result1["score"] == 1
 
         # Second attempt - incorrect answer
-        incorrect_option = next(opt for opt in question["options"] if not opt["is_correct"])
+        incorrect_option = next(
+            opt for opt in question["options"] if not opt["is_correct"]
+        )
         submission2 = {
             "quiz_id": quiz_id,
-            "answers": [{
-                "question_id": question["id"],
-                "selected_option_id": incorrect_option["id"]
-            }]
+            "answers": [
+                {
+                    "question_id": question["id"],
+                    "selected_option_id": incorrect_option["id"],
+                }
+            ],
         }
 
         response2 = self.client.post(f"/api/v1/quiz/{quiz_id}/submit", json=submission2)
@@ -468,25 +486,24 @@ class TestQuizRoutesEndToEnd:
                     questions=[
                         GeneratedQuizQuestion(
                             question="Test question?",
-                            options={"A": "Answer A", "B": "Answer B", "C": "Answer C", "D": "Answer D"},
+                            options={
+                                "A": "Answer A",
+                                "B": "Answer B",
+                                "C": "Answer C",
+                                "D": "Answer D",
+                            },
                             correct_answer="A",
                         )
-                    ]
+                    ],
                 )
             )
 
-            response = self.client.post(
-                "/api/v1/quiz/generate",
-                json={"topic": "Test"}
-            )
+            response = self.client.post("/api/v1/quiz/generate", json={"topic": "Test"})
 
             quiz_id = response.json()["id"]
 
         # Submit with empty answers
-        submission = {
-            "quiz_id": quiz_id,
-            "answers": []
-        }
+        submission = {"quiz_id": quiz_id, "answers": []}
 
         response = self.client.post(f"/api/v1/quiz/{quiz_id}/submit", json=submission)
         assert response.status_code == 200

@@ -112,28 +112,70 @@ class TestQuizService:
 
         # Question 1: 2+2=4 (correct answer is B)
         question1 = Question(
-            id=1,
-            quiz=quiz,
-            question_text="What is 2+2?",
-            question_order=1
+            id=1, quiz=quiz, question_text="What is 2+2?", question_order=1
         )
-        option1a = QuestionOption(id=1, question=question1, option_letter="A", option_text="3", is_correct=False)
-        option1b = QuestionOption(id=2, question=question1, option_letter="B", option_text="4", is_correct=True)
-        option1c = QuestionOption(id=3, question=question1, option_letter="C", option_text="5", is_correct=False)
-        option1d = QuestionOption(id=4, question=question1, option_letter="D", option_text="6", is_correct=False)
+        option1a = QuestionOption(
+            id=1,
+            question=question1,
+            option_letter="A",
+            option_text="3",
+            is_correct=False,
+        )
+        option1b = QuestionOption(
+            id=2,
+            question=question1,
+            option_letter="B",
+            option_text="4",
+            is_correct=True,
+        )
+        option1c = QuestionOption(
+            id=3,
+            question=question1,
+            option_letter="C",
+            option_text="5",
+            is_correct=False,
+        )
+        option1d = QuestionOption(
+            id=4,
+            question=question1,
+            option_letter="D",
+            option_text="6",
+            is_correct=False,
+        )
         question1.options = [option1a, option1b, option1c, option1d]
 
         # Question 2: 3*3=9 (correct answer is C)
         question2 = Question(
-            id=2,
-            quiz=quiz,
-            question_text="What is 3*3?",
-            question_order=2
+            id=2, quiz=quiz, question_text="What is 3*3?", question_order=2
         )
-        option2a = QuestionOption(id=5, question=question2, option_letter="A", option_text="6", is_correct=False)
-        option2b = QuestionOption(id=6, question=question2, option_letter="B", option_text="8", is_correct=False)
-        option2c = QuestionOption(id=7, question=question2, option_letter="C", option_text="9", is_correct=True)
-        option2d = QuestionOption(id=8, question=question2, option_letter="D", option_text="12", is_correct=False)
+        option2a = QuestionOption(
+            id=5,
+            question=question2,
+            option_letter="A",
+            option_text="6",
+            is_correct=False,
+        )
+        option2b = QuestionOption(
+            id=6,
+            question=question2,
+            option_letter="B",
+            option_text="8",
+            is_correct=False,
+        )
+        option2c = QuestionOption(
+            id=7,
+            question=question2,
+            option_letter="C",
+            option_text="9",
+            is_correct=True,
+        )
+        option2d = QuestionOption(
+            id=8,
+            question=question2,
+            option_letter="D",
+            option_text="12",
+            is_correct=False,
+        )
         question2.options = [option2a, option2b, option2c, option2d]
 
         quiz.questions = [question1, question2]
@@ -150,7 +192,7 @@ class TestQuizService:
             answers=[
                 UserAnswerSubmission(question_id=1, selected_option_id=2),  # Correct: B
                 UserAnswerSubmission(question_id=2, selected_option_id=7),  # Correct: C
-            ]
+            ],
         )
 
         # Test submission
@@ -173,14 +215,42 @@ class TestQuizService:
         # Create a mock quiz (same as above)
         quiz = Quiz(id=1, topic="Test Quiz")
 
-        question1 = Question(id=1, quiz=quiz, question_text="What is 2+2?", question_order=1)
-        option1a = QuestionOption(id=1, question=question1, option_letter="A", option_text="3", is_correct=False)
-        option1b = QuestionOption(id=2, question=question1, option_letter="B", option_text="4", is_correct=True)
+        question1 = Question(
+            id=1, quiz=quiz, question_text="What is 2+2?", question_order=1
+        )
+        option1a = QuestionOption(
+            id=1,
+            question=question1,
+            option_letter="A",
+            option_text="3",
+            is_correct=False,
+        )
+        option1b = QuestionOption(
+            id=2,
+            question=question1,
+            option_letter="B",
+            option_text="4",
+            is_correct=True,
+        )
         question1.options = [option1a, option1b]
 
-        question2 = Question(id=2, quiz=quiz, question_text="What is 3*3?", question_order=2)
-        option2a = QuestionOption(id=5, question=question2, option_letter="A", option_text="6", is_correct=False)
-        option2c = QuestionOption(id=7, question=question2, option_letter="C", option_text="9", is_correct=True)
+        question2 = Question(
+            id=2, quiz=quiz, question_text="What is 3*3?", question_order=2
+        )
+        option2a = QuestionOption(
+            id=5,
+            question=question2,
+            option_letter="A",
+            option_text="6",
+            is_correct=False,
+        )
+        option2c = QuestionOption(
+            id=7,
+            question=question2,
+            option_letter="C",
+            option_text="9",
+            is_correct=True,
+        )
         question2.options = [option2a, option2c]
 
         quiz.questions = [question1, question2]
@@ -196,8 +266,10 @@ class TestQuizService:
             quiz_id=1,
             answers=[
                 UserAnswerSubmission(question_id=1, selected_option_id=2),  # Correct: B
-                UserAnswerSubmission(question_id=2, selected_option_id=5),  # Incorrect: A
-            ]
+                UserAnswerSubmission(
+                    question_id=2, selected_option_id=5
+                ),  # Incorrect: A
+            ],
         )
 
         # Test submission
@@ -224,7 +296,7 @@ class TestQuizService:
 
         submission = QuizSubmission(
             quiz_id=999,
-            answers=[UserAnswerSubmission(question_id=1, selected_option_id=1)]
+            answers=[UserAnswerSubmission(question_id=1, selected_option_id=1)],
         )
 
         result = self.quiz_service.submit_quiz_answers(submission)
@@ -236,7 +308,13 @@ class TestQuizService:
         # Create a quiz with one question
         quiz = Quiz(id=1, topic="Test Quiz")
         question = Question(id=1, quiz=quiz, question_text="Test?", question_order=1)
-        option = QuestionOption(id=1, question=question, option_letter="A", option_text="Answer", is_correct=True)
+        option = QuestionOption(
+            id=1,
+            question=question,
+            option_letter="A",
+            option_text="Answer",
+            is_correct=True,
+        )
         question.options = [option]
         quiz.questions = [question]
 
@@ -248,7 +326,9 @@ class TestQuizService:
         # Submit answer for non-existent question
         submission = QuizSubmission(
             quiz_id=1,
-            answers=[UserAnswerSubmission(question_id=999, selected_option_id=1)]  # Invalid question ID
+            answers=[
+                UserAnswerSubmission(question_id=999, selected_option_id=1)
+            ],  # Invalid question ID
         )
 
         result = self.quiz_service.submit_quiz_answers(submission)
@@ -264,7 +344,13 @@ class TestQuizService:
         # Create a quiz
         quiz = Quiz(id=1, topic="Test Quiz")
         question = Question(id=1, quiz=quiz, question_text="Test?", question_order=1)
-        option = QuestionOption(id=1, question=question, option_letter="A", option_text="Answer", is_correct=True)
+        option = QuestionOption(
+            id=1,
+            question=question,
+            option_letter="A",
+            option_text="Answer",
+            is_correct=True,
+        )
         question.options = [option]
         quiz.questions = [question]
 
@@ -276,7 +362,9 @@ class TestQuizService:
         # Submit answer with invalid option ID
         submission = QuizSubmission(
             quiz_id=1,
-            answers=[UserAnswerSubmission(question_id=1, selected_option_id=999)]  # Invalid option ID
+            answers=[
+                UserAnswerSubmission(question_id=1, selected_option_id=999)
+            ],  # Invalid option ID
         )
 
         result = self.quiz_service.submit_quiz_answers(submission)

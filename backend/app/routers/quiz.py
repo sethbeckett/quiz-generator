@@ -164,8 +164,8 @@ async def get_quiz_feedback(
         raise HTTPException(status_code=404, detail=f"Quiz with ID {quiz_id} not found")
 
     # Prefer test-patched service; fallback to real gemini service if available
-    service = getattr(quiz_service_module, 'gemini_service', None) or getattr(
-        gemini_module, 'gemini_service', None
+    service = getattr(quiz_service_module, "gemini_service", None) or getattr(
+        gemini_module, "gemini_service", None
     )
 
     feedback = None

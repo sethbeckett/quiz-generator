@@ -1,7 +1,5 @@
 # 🧠 AI Quiz Generator
 
-[![CI](https://github.com/sethbeckett/quiz-generator/workflows/CI/badge.svg)](https://github.com/sethbeckett/quiz-generator/actions)
-[![codecov](https://codecov.io/gh/sethbeckett/quiz-generator/branch/main/graph/badge.svg)](https://codecov.io/gh/sethbeckett/quiz-generator)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Node.js 18+](https://img.shields.io/badge/node.js-18+-green.svg)](https://nodejs.org/)
@@ -46,26 +44,12 @@ A modern, AI-powered web application that generates custom multiple-choice quizz
     └── API Service Layer
 ```
 
-## 🎨 Architecture & UI Overview
-
-### Process Flow
-The following diagram was the rough draft illustrating the complete user journey and system interactions:
-
-![Process Flow Diagram](docs/images/process-flow-diagram.png)
-
-### UI Design
-Here's the rough draft for the layout of the different pages:
-
-![UI Design Mockup](docs/images/ui-design-mockup.png)
-
-*Note: These are working drafts of the architecture and interface design, showcasing the planned user experience and system flow.*
-
 ## 🚀 Quick Start
 
 ### Prerequisites
 - **For Docker (Recommended):** Docker Desktop installed
 - **For Local Development:** Python 3.11+ and Node.js 18+
-- **Required:** Google Gemini API key from [Google AI Studio](https://aistudio.google.com/)
+- **Required:** Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ### Option 1: Docker (Recommended)
 
@@ -75,26 +59,38 @@ Here's the rough draft for the layout of the different pages:
    cd quiz-generator
    ```
 
-2. **Set up environment variables**
+2. **Get your Gemini API key**
+   - Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+   - Sign in with your Google account
+   - Click "Create API Key" and follow the prompts
+   - Copy the generated API key (you'll use this for `GEMINI_API_KEY`)
+
+3. **Set up environment variables**
    ```bash
    # Copy example environment file
    cp .env.example .env
    
-   # Edit .env and add your Gemini API key from Google AI Studio
+   # Edit .env and add your Gemini API key as GEMINI_API_KEY
    GEMINI_API_KEY=your_api_key_here
    ```
 
-3. **Run with Docker Compose**
+4. **Run with Docker Compose**
    ```bash
    docker compose up --build
    ```
 
-4. **Access the application**
+5. **Access the application**
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8000
    - API Documentation: http://localhost:8000/docs
 
 ### Option 2: Local Development
+
+**First, get your Gemini API key:**
+1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Sign in with your Google account  
+3. Click "Create API Key" and follow the prompts
+4. Copy the generated API key (you'll set this as `GEMINI_API_KEY`)
 
 #### Backend Setup
 ```bash
@@ -107,7 +103,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Set environment variables
+# Set environment variables (use GEMINI_API_KEY as the variable name)
 export GEMINI_API_KEY=your_api_key_here
 export DATABASE_URL=sqlite:///./quiz_generator.db
 
@@ -135,6 +131,7 @@ npm start
 
 #### Backend (.env)
 ```bash
+# Required: Set your Gemini API key with this exact variable name
 GEMINI_API_KEY=your_gemini_api_key_here
 DATABASE_URL=sqlite:///./quiz_generator.db
 DEBUG=True
@@ -354,8 +351,9 @@ This technical demo could be extended with:
    - **Port already in use**: Stop existing containers with `docker compose down` or use different ports
 
 2. **Gemini API Key Issues**
-   - Ensure you have a valid Google AI Studio API key
+   - Ensure you have a valid Google AI Studio API key from [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
    - Check that the key is properly set in environment variables
+   - Verify the API key has no extra spaces or characters
 
 3. **Database Connection Issues**
    - Verify SQLite file permissions
@@ -369,3 +367,17 @@ This technical demo could be extended with:
 - Review the setup instructions and ensure all prerequisites are met
 - Check the console logs for specific error messages
 - Verify your Gemini API key is valid and properly configured
+
+## 🎨 Architecture & UI Overview (Initial Rough Drafts)
+
+### Process Flow
+The following diagram was the rough draft illustrating the complete user journey and system interactions:
+
+![Process Flow Diagram](docs/images/process-flow-diagram.png)
+
+### UI Design
+Here's the rough draft for the layout of the different pages:
+
+![UI Design Mockup](docs/images/ui-design-mockup.png)
+
+*Note: These are working drafts of the architecture and interface design, showcasing the planned user experience and system flow.*
